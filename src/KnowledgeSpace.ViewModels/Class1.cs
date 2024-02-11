@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace KnowledgeSpace.ViewModels
+﻿namespace KnowledgeSpace.ViewModels
 {
     public class Class1
     {

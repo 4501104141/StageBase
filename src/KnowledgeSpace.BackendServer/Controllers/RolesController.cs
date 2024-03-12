@@ -86,8 +86,9 @@ namespace KnowledgeSpace.BackendServer.Controllers
         {
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
+            {
                 return NotFound();
-
+            }
             var roleVm = new RoleVm()
             {
                 Id = role.Id,

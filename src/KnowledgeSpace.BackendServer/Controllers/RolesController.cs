@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using KnowledgeSpace.ViewModels;
+﻿using KnowledgeSpace.ViewModels;
 using KnowledgeSpace.ViewModels.Systems;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KnowledgeSpace.BackendServer.Controllers
 {
@@ -44,19 +44,18 @@ namespace KnowledgeSpace.BackendServer.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRoles()
         {
-            var roles = await _roleManager.Roles
-                .Select(r => new RoleVm()
-                {
-                    Id = r.Id,
-                    Name = r.Name
-                })
-                .ToListAsync();
-            return Ok(roles);
+            var roles = await _roleManager.Roles.ToListAsync();
+            var rolevms = roles.Select(r => new RoleVm()
+            {
+                Id = r.Id,
+                Name = r.Name
+            });
+            return Ok(rolevms);
         }
 
         //URL: GET: http://localhost:5001/api/roles/?filter={filter}&pageIndex=1&pageSize=10
         [HttpGet]
-        public async Task<IActionResult> GetRoles(string filter, int pageIndex, int pageSize)
+        public async Task<IActionResult> GetRolesPaging(string filter, int pageIndex, int pageSize)
         {
             var query = _roleManager.Roles;
             if (!string.IsNullOrEmpty(filter))

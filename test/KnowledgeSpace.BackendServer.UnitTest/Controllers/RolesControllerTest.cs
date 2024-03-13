@@ -49,7 +49,6 @@ namespace KnowledgeSpace.BackendServer.UnitTest.Controllers
                 Id = "test",
                 Name = "test"
             });
-
             Assert.NotNull(result);
             Assert.IsType<CreatedAtActionResult>(result);
         }

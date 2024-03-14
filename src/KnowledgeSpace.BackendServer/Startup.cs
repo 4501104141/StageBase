@@ -1,10 +1,13 @@
 using FluentValidation.AspNetCore;
 using KnowledgeSpace.BackendServer.Data;
 using KnowledgeSpace.BackendServer.Data.Entities;
+using KnowledgeSpace.BackendServer.IdentityServer;
+using KnowledgeSpace.BackendServer.Services;
 using KnowledgeSpace.ViewModels.Systems;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +36,17 @@ namespace KnowledgeSpace.BackendServer
             //2. Setup idetntity
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+            var builder = services.AddIdentityServer(options =>
+            {
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+            })
+            .AddInMemoryApiResources(Config.Apis)
+            .AddInMemoryClients(Config.Clients)
+            .AddInMemoryIdentityResources(Config.Ids)
+            .AddAspNetIdentity<User>();
             services.Configure<IdentityOptions>(options =>
             {
                 // Default Lockout settings.
@@ -47,8 +61,11 @@ namespace KnowledgeSpace.BackendServer
                 options.Password.RequireUppercase = true;
                 options.User.RequireUniqueEmail = true;
             });
-            services.AddControllers()
-                           .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RoleVmValidator>()); services.AddTransient<DbInitializer>();
+            services.AddControllersWithViews()
+                           .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RoleVmValidator>());
+            services.AddRazorPages();
+            services.AddTransient<DbInitializer>();
+            services.AddTransient<IEmailSender, EmailSenderService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Knowledge Space API", Version = "v1" });
@@ -62,15 +79,18 @@ namespace KnowledgeSpace.BackendServer
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseStaticFiles();
+            app.UseIdentityServer();
+            app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapRazorPages();
             });
             app.UseSwagger();
-
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Knowledge Space API V1");

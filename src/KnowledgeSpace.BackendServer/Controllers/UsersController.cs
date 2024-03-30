@@ -1,13 +1,13 @@
-﻿using KnowledgeSpace.ViewModels.Systems;
+﻿using KnowledgeSpace.BackendServer.Data;
+using KnowledgeSpace.BackendServer.Data.Entities;
 using KnowledgeSpace.ViewModels;
+using KnowledgeSpace.ViewModels.Systems;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using KnowledgeSpace.BackendServer.Data.Entities;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
-using KnowledgeSpace.BackendServer.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KnowledgeSpace.BackendServer.Controllers
 {
@@ -124,7 +124,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
         public async Task<IActionResult> PutUser(string id, [FromBody] UserCreateRequest request)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if(user==null)
+            if (user == null)
             {
                 return NotFound();
             }
@@ -132,7 +132,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             user.LastName = request.LastName;
             user.Dob = request.Dob;
             var result = await _userManager.UpdateAsync(user);
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 return NoContent();
             }

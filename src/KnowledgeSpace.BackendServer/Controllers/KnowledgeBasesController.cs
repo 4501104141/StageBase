@@ -50,6 +50,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
                 Workaround = request.Workaround,
                 Note = request.Note,
                 Labels = request.Labels,
+                OwnerUserId = "www",
             };
             knowledgeBase.Id = await _sequenceService.GetKnowledgeBaseNewId();
             //Process attachment

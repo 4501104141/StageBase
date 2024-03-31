@@ -1,6 +1,7 @@
 using FluentValidation.AspNetCore;
 using KnowledgeSpace.BackendServer.Data;
 using KnowledgeSpace.BackendServer.Data.Entities;
+using KnowledgeSpace.BackendServer.Extensions;
 using KnowledgeSpace.BackendServer.IdentityServer;
 using KnowledgeSpace.BackendServer.Services;
 using KnowledgeSpace.ViewModels.Systems;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,6 +65,10 @@ namespace KnowledgeSpace.BackendServer
                 options.Password.RequireDigit = true;
                 options.Password.RequireUppercase = true;
                 options.User.RequireUniqueEmail = true;
+            });
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
             });
             services.AddControllersWithViews()
                            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RoleCreateRequestValidator>());
@@ -132,6 +138,7 @@ namespace KnowledgeSpace.BackendServer
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseErrorWrapping();
             app.UseStaticFiles();
             app.UseIdentityServer();
             app.UseAuthentication();

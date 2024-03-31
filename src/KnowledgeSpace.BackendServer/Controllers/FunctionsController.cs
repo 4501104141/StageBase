@@ -116,6 +116,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
 
         [HttpPut("{id}")]
         [ClaimRequirement(FunctionCode.SYSTEM_FUNCTION, CommandCode.UPDATE)]
+        [ApiValidationFilter]
         public async Task<IActionResult> PutFunction(string id, [FromBody] FunctionCreateRequest request)
         {
             var function = await _context.Functions.FindAsync(id);
@@ -131,7 +132,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             {
                 return NoContent();
             }
-            return BadRequest();
+            return BadRequest(new ApiBadRequestResponse("Create function failed"));
         }
 
         [HttpDelete("{id}")]
@@ -155,7 +156,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
                 };
                 return Ok(functionvm);
             }
-            return BadRequest();
+            return BadRequest(new ApiBadRequestResponse("Delete function failed"));
         }
 
         [HttpGet("{functionId}/commands")]
@@ -250,7 +251,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             }
             else
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse("Delete command to function failed"));
             }
         }
     }

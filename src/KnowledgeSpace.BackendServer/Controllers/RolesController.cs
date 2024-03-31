@@ -2,6 +2,7 @@
 using KnowledgeSpace.BackendServer.Constants;
 using KnowledgeSpace.BackendServer.Data;
 using KnowledgeSpace.BackendServer.Data.Entities;
+using KnowledgeSpace.BackendServer.Helpers;
 using KnowledgeSpace.ViewModels;
 using KnowledgeSpace.ViewModels.Systems;
 using Microsoft.AspNetCore.Identity;
@@ -27,6 +28,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
 
         //URL: POST: http://localhost:5001/api/roles
         [HttpPost]
+        [ApiValidationFilter]
         [ClaimRequirement(FunctionCode.SYSTEM_ROLE, CommandCode.CREATE)]
         public async Task<IActionResult> PostRole(RoleCreateRequest request)
         {
@@ -43,7 +45,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             }
             else
             {
-                return BadRequest(result.Errors);
+                return BadRequest(new ApiBadRequestResponse(result));
             }
         }
 
@@ -96,7 +98,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
             {
-                return NotFound();
+                return NotFound(new ApiNotFoundResponse($"Cannot find role with id: {id}"));
             }
             var roleVm = new RoleVm()
             {
@@ -108,17 +110,18 @@ namespace KnowledgeSpace.BackendServer.Controllers
 
         //URL: PUT: http://localhost:5001/api/roles/{id}
         [HttpPut("{id}")]
+        [ApiValidationFilter]
         [ClaimRequirement(FunctionCode.SYSTEM_ROLE, CommandCode.UPDATE)]
         public async Task<IActionResult> PutRole(string id, [FromBody] RoleCreateRequest request)
         {
             if (id != request.Id)
             {
-                return BadRequest();
+                return BadRequest(new ApiBadRequestResponse("Role id not match"));
             }
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
             {
-                return NotFound();
+                return NotFound(new ApiNotFoundResponse($"Cannot find role with id: {id}"));
             }
             role.Name = request.Name;
             role.NormalizedName = request.Name.ToUpper();
@@ -127,7 +130,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             {
                 return NoContent();
             }
-            return BadRequest(result.Errors);
+            return BadRequest(new ApiBadRequestResponse(result));
         }
 
         //URL: DELETE: http://localhost:5001/api/roles/{id}
@@ -138,7 +141,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
             {
-                return NotFound();
+                return NotFound(new ApiNotFoundResponse($"Cannot find role with id: {id}"));
             }
             var result = await _roleManager.DeleteAsync(role);
             if (result.Succeeded)
@@ -150,7 +153,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
                 };
                 return Ok(rolevm);
             }
-            return BadRequest(result.Errors);
+            return BadRequest(new ApiBadRequestResponse(result));
         }
 
         [HttpGet("{roleId}/permissions")]
@@ -172,6 +175,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
 
         [HttpPut("{roleId}/permissions")]
         [ClaimRequirement(FunctionCode.SYSTEM_PERMISSION, CommandCode.VIEW)]
+        [ApiValidationFilter]
         public async Task<IActionResult> PutPermissionByRoleId(string roleId, [FromBody] UpdatePermissionRequest request)
         {
             //create new permission list from user changed
@@ -188,7 +192,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             {
                 return NoContent();
             }
-            return BadRequest();
+            return BadRequest(new ApiBadRequestResponse("Save permission failed"));
         }
     }
 }

@@ -2,6 +2,7 @@
 using KnowledgeSpace.BackendServer.Constants;
 using KnowledgeSpace.BackendServer.Data;
 using KnowledgeSpace.BackendServer.Data.Entities;
+using KnowledgeSpace.BackendServer.Helpers;
 using KnowledgeSpace.ViewModels;
 using KnowledgeSpace.ViewModels.Systems;
 using Microsoft.AspNetCore.Identity;
@@ -30,6 +31,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
 
         [HttpPost]
         [ClaimRequirement(FunctionCode.SYSTEM_USER, CommandCode.CREATE)]
+        [ApiValidationFilter]
         public async Task<IActionResult> PostUser(UserCreateRequest request)
         {
             var user = new User()
@@ -49,7 +51,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             }
             else
             {
-                return BadRequest(result.Errors);
+                return BadRequest(new ApiBadRequestResponse(result));
             }
         }
 
@@ -111,7 +113,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return NotFound();
+                return NotFound(new ApiNotFoundResponse($"Cannot found user with id: {id}"));
             }
             var userVm = new UserVm()
             {
@@ -133,7 +135,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return NotFound();
+                return NotFound(new ApiNotFoundResponse($"Cannot found user with id: {id}"));
             }
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
@@ -143,22 +145,23 @@ namespace KnowledgeSpace.BackendServer.Controllers
             {
                 return NoContent();
             }
-            return BadRequest(result.Errors);
+            return BadRequest(new ApiBadRequestResponse(result));
         }
 
         [HttpPut("{id}/change-password")]
         [ClaimRequirement(FunctionCode.SYSTEM_USER, CommandCode.UPDATE)]
+        [ApiValidationFilter]
         public async Task<IActionResult> PutUserPassword(string id, [FromBody] UserPasswordChangeRequest request)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
-                return NotFound();
+                return NotFound(new ApiNotFoundResponse($"Cannot find role with id: {id}"));
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
             if (result.Succeeded)
             {
                 return NoContent();
             }
-            return BadRequest(result.Errors);
+            return BadRequest(new ApiBadRequestResponse(result));
         }
 
         [HttpDelete("{id}")]
@@ -185,7 +188,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
                 };
                 return Ok(uservm);
             }
-            return BadRequest(result.Errors);
+            return BadRequest(new ApiBadRequestResponse(result));
         }
 
         [HttpGet("{userId}/menu")]

@@ -1,4 +1,6 @@
-﻿using KnowledgeSpace.BackendServer.Data;
+﻿using KnowledgeSpace.BackendServer.Authorization;
+using KnowledgeSpace.BackendServer.Constants;
+using KnowledgeSpace.BackendServer.Data;
 using KnowledgeSpace.BackendServer.Data.Entities;
 using KnowledgeSpace.BackendServer.Helpers;
 using KnowledgeSpace.BackendServer.Services;
@@ -7,13 +9,11 @@ using KnowledgeSpace.ViewModels.Contents;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.IO;
 using System;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net.Http.Headers;
-using KnowledgeSpace.BackendServer.Authorization;
-using KnowledgeSpace.BackendServer.Constants;
+using System.Threading.Tasks;
 
 namespace KnowledgeSpace.BackendServer.Controllers
 {
@@ -223,7 +223,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
                 FileType = Path.GetExtension(fileName),
                 KnowledgeBaseId = knowledegeBaseId,
             };
-             return attachmentEntity;
+            return attachmentEntity;
         }
 
         private async Task ProcessLabel(KnowledgeBaseCreateRequest request, KnowledgeBase knowledgeBase)

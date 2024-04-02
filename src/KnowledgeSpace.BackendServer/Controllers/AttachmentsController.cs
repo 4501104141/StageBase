@@ -27,7 +27,6 @@ namespace KnowledgeSpace.BackendServer.Controllers
                     FileType = c.FileType,
                     KnowledgeBaseId = c.KnowledgeBaseId
                 }).ToListAsync();
-
             return Ok(query);
         }
 
@@ -37,9 +36,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             var attachment = await _context.Attachments.FindAsync(attachmentId);
             if (attachment == null)
                 return BadRequest(new ApiBadRequestResponse($"Cannot found attachment with id {attachmentId}"));
-
             _context.Attachments.Remove(attachment);
-
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {

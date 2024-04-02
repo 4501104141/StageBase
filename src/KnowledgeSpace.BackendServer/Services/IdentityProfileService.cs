@@ -1,16 +1,16 @@
-﻿using IdentityServer4.Models;
+﻿using IdentityServer4.Extensions;
+using IdentityServer4.Models;
 using IdentityServer4.Services;
-using KnowledgeSpace.BackendServer.Data.Entities;
+using KnowledgeSpace.BackendServer.Constants;
 using KnowledgeSpace.BackendServer.Data;
+using KnowledgeSpace.BackendServer.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System;
-using IdentityServer4.Extensions;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using KnowledgeSpace.BackendServer.Constants;
 
 namespace KnowledgeSpace.BackendServer.Services
 {

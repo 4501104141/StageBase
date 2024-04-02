@@ -2,12 +2,12 @@
 using KnowledgeSpace.BackendServer.Constants;
 using KnowledgeSpace.BackendServer.Data.Entities;
 using KnowledgeSpace.BackendServer.Helpers;
-using KnowledgeSpace.ViewModels.Contents;
 using KnowledgeSpace.ViewModels;
+using KnowledgeSpace.ViewModels.Contents;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace KnowledgeSpace.BackendServer.Controllers
 {
@@ -37,7 +37,6 @@ namespace KnowledgeSpace.BackendServer.Controllers
                     OwnwerUserId = c.OwnwerUserId
                 })
                 .ToListAsync();
-
             var pagination = new Pagination<CommentVm>
             {
                 Items = items,
@@ -53,7 +52,6 @@ namespace KnowledgeSpace.BackendServer.Controllers
             var comment = await _context.Comments.FindAsync(commentId);
             if (comment == null)
                 return NotFound(new ApiNotFoundResponse($"Cannot found comment with id: {commentId}"));
-
             var commentVm = new CommentVm()
             {
                 Id = comment.Id,
@@ -63,7 +61,6 @@ namespace KnowledgeSpace.BackendServer.Controllers
                 LastModifiedDate = comment.LastModifiedDate,
                 OwnwerUserId = comment.OwnwerUserId
             };
-
             return Ok(commentVm);
         }
 
@@ -79,14 +76,11 @@ namespace KnowledgeSpace.BackendServer.Controllers
                 OwnwerUserId = string.Empty/*TODO: GET USER FROM CLAIM*/,
             };
             _context.Comments.Add(comment);
-
             var knowledgeBase = await _context.KnowledgeBases.FindAsync(knowledgeBaseId);
             if (knowledgeBase != null)
                 return BadRequest(new ApiBadRequestResponse($"Cannot found knowledge base with id: {knowledgeBaseId}"));
-
-            knowledgeBase.NumberOfComments = knowledgeBase.NumberOfVotes.GetValueOrDefault(0) + 1;
+            knowledgeBase.NumberOfComments = knowledgeBase.NumberOfComments.GetValueOrDefault(0) + 1;
             _context.KnowledgeBases.Update(knowledgeBase);
-
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {
@@ -108,12 +102,9 @@ namespace KnowledgeSpace.BackendServer.Controllers
                 return BadRequest(new ApiBadRequestResponse($"Cannot found comment with id: {commentId}"));
             if (comment.OwnwerUserId != User.Identity.Name)
                 return Forbid();
-
             comment.Content = request.Content;
             _context.Comments.Update(comment);
-
             var result = await _context.SaveChangesAsync();
-
             if (result > 0)
             {
                 return NoContent();
@@ -128,16 +119,12 @@ namespace KnowledgeSpace.BackendServer.Controllers
             var comment = await _context.Comments.FindAsync(commentId);
             if (comment == null)
                 return NotFound(new ApiNotFoundResponse($"Cannot found the comment with id: {commentId}"));
-
             _context.Comments.Remove(comment);
-
             var knowledgeBase = await _context.KnowledgeBases.FindAsync(knowledgeBaseId);
             if (knowledgeBase != null)
                 return BadRequest(new ApiBadRequestResponse($"Cannot found knowledge base with id: {knowledgeBaseId}"));
-
-            knowledgeBase.NumberOfComments = knowledgeBase.NumberOfVotes.GetValueOrDefault(0) - 1;
+            knowledgeBase.NumberOfComments = knowledgeBase.NumberOfComments.GetValueOrDefault(0) - 1;
             _context.KnowledgeBases.Update(knowledgeBase);
-
             var result = await _context.SaveChangesAsync();
             if (result > 0)
             {

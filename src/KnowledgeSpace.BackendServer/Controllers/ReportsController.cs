@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using KnowledgeSpace.BackendServer.Data.Entities;
+﻿using KnowledgeSpace.BackendServer.Data.Entities;
 using KnowledgeSpace.BackendServer.Helpers;
 using KnowledgeSpace.ViewModels;
 using KnowledgeSpace.ViewModels.Contents;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace KnowledgeSpace.BackendServer.Controllers
 {
@@ -81,7 +78,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             var knowledgeBase = await _context.KnowledgeBases.FindAsync(knowledgeBaseId);
             if (knowledgeBase != null)
                 return BadRequest(new ApiBadRequestResponse($"Cannot found knowledge base with id {knowledgeBaseId}"));
-            knowledgeBase.NumberOfComments = knowledgeBase.NumberOfReports.GetValueOrDefault(0) + 1;
+            knowledgeBase.NumberOfReports = knowledgeBase.NumberOfReports.GetValueOrDefault(0) + 1;
             _context.KnowledgeBases.Update(knowledgeBase);
             var result = await _context.SaveChangesAsync();
             if (result > 0)
@@ -123,7 +120,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             var knowledgeBase = await _context.KnowledgeBases.FindAsync(knowledgeBaseId);
             if (knowledgeBase != null)
                 return BadRequest(new ApiBadRequestResponse($"Cannot found knowledge base with id {knowledgeBaseId}"));
-            knowledgeBase.NumberOfComments = knowledgeBase.NumberOfReports.GetValueOrDefault(0) - 1;
+            knowledgeBase.NumberOfReports = knowledgeBase.NumberOfReports.GetValueOrDefault(0) - 1;
             _context.KnowledgeBases.Update(knowledgeBase);
             var result = await _context.SaveChangesAsync();
             if (result > 0)

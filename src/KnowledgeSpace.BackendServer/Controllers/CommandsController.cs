@@ -16,7 +16,7 @@ namespace KnowledgeSpace.BackendServer.Controllers
             _context = context;
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetCommants()
         {
             var user = User.Identity.Name;

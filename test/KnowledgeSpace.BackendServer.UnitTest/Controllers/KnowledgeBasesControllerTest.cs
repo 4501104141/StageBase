@@ -1,7 +1,7 @@
 ﻿
 namespace KnowledgeSpace.BackendServer.UnitTest.Controllers
 {
-    internal class KnowledgeBasesControllerTest
+    public class KnowledgeBasesControllerTest
     {
     }
 }

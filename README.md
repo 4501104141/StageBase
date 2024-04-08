@@ -14,3 +14,10 @@ For each KB, user can vote it and comment to below KB.
 2. Set startup project is KnowledgeSpace.BackendServer
 3. Run Update-Database to generate database
 4. Set startup project to multiple projects include: KnowledgeSpace.BackendServer and KnowledgeSpace.WebPortal
+
+# Angular Installation
+- NPM (https://nodejs.org/en/)
+- https://git-scm.com/downloads
+- npm install -g @angular/cli
+- Visual Studio Code (https://code.visualstudio.com/)
+- Run command: git clone https://github.com/start-angular/SB-Admin-BS4-Angular-8.git admin-app
